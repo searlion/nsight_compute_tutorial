@@ -1,0 +1,32 @@
+[project]
+name = "nsight-compute-tutorial"
+version = "0.1.0"
+description = "GEMM kernels (TileLang / Triton / hand-written CUDA / cuBLAS) for Nsight Compute profiling"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "torch==2.13.0",
+    "triton==3.7.1",
+    "tilelang==0.1.13",
+    # nvcc + the CUDA headers/static libs that the standalone .cu build and
+    # TileLang's runtime codegen need. First-class deps, so no system CUDA
+    # toolkit is required.
+    #
+    # These must all stay on the same 13.0.x line as the cuda-runtime headers
+    # that torch 2.13 pins (13.0.96): a newer nvcc against 13.0 headers trips
+    # CCCL's "CUDA compiler and CUDA toolkit headers are incompatible".
+    "nvidia-cuda-nvcc~=13.0.0",
+    "nvidia-cuda-runtime~=13.0.0",
+    # CUTLASS (vendored by tilelang) includes <cccl/cuda/std/...>; without this
+    # wheel every TileLang kernel that is not already cached fails to compile.
+    "nvidia-cuda-cccl~=13.0.0",
+    # nvcc's own back end; left unpinned these float ahead of nvcc itself.
+    "nvidia-cuda-crt~=13.0.0",
+    "nvidia-nvvm~=13.0.0",
+    # torch.utils.cpp_extension.load_inline shells out to ninja
+    "ninja",
+]
+
+[tool.uv]
+# torch's CUDA wheels only exist for linux x86_64; keep resolution honest.
+environments = ["sys_platform == 'linux' and platform_machine == 'x86_64'"]

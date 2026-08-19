@@ -2,8 +2,8 @@
 // Functional equivalent of gemm_tilelang.py, same 128x128x32 block tiling,
 // tensor cores via WMMA, double-buffered shared memory.
 //
-// Build:
-//   nvcc -O3 -arch=sm_89 -std=c++17 gemm_cuda.cu -o gemm_cuda
+// Build (the Makefile discovers nvcc and the GPU arch, nothing to edit):
+//   make
 // Run:
 //   ./gemm_cuda [M N K]
 
